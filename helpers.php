@@ -43,6 +43,7 @@ function get_current_user_id($pdo) {
     // Set cookie for 10 years (HttpOnly + SameSite to protect from XSS/CSRF)
     setcookie($cookie_name, $cookie_hash, [
         'expires'  => time() + (10 * 365 * 24 * 60 * 60),
+        'secure'   => true,
         'path'     => '/',
         'httponly' => true,
         'samesite' => 'Strict',

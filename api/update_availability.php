@@ -47,5 +47,6 @@ try {
     
     json_response(['success' => true]);
 } catch (Exception $e) {
-    json_response(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+    error_log("update_availability error: " . $e->getMessage());
+    json_response(['error' => 'An unexpected error occurred.'], 500);
 }

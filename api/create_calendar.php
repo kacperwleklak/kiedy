@@ -12,6 +12,9 @@ $start_time = $_POST['start_time'] ?? '08:00';
 $end_time = $_POST['end_time'] ?? '20:00';
 $datesJSON = $_POST['dates'] ?? '[]';
 
+if (mb_strlen($title) > 200) die('Title too long.');
+if (mb_strlen($description) > 2000) die('Description too long.');
+
 $dates = json_decode($datesJSON, true);
 
 if (empty($title) || empty($dates) || !is_array($dates)) {
@@ -37,6 +40,11 @@ try {
 
     $stmtDays = $pdo->prepare("INSERT INTO calendar_days (calendar_id, date_value) VALUES (?, ?)");
     foreach ($dates as $date) {
+        $d = DateTime::createFromFormat('Y-m-d', $date);
+        if (!$d || $d->format('Y-m-d') !== $date) {
+            $pdo->rollBack();
+            die('Invalid date: ' . htmlspecialchars($date));
+        }
         $stmtDays->execute([$calendar_id, $date]);
     }
 

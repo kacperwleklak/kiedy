@@ -19,12 +19,14 @@ The easiest way to run the project locally for development is using Docker and D
    cd kiedy
    ```
 
-2. Start the Docker containers:
+2. Copy `.env_template` to `.env` and fill in your values (you can also use the defaults).
+
+3. Start the Docker containers:
    ```bash
    docker-compose up -d --build
    ```
 
-3. Open your browser and navigate to:
+4. Open your browser and navigate to:
    ```
    http://localhost:8000
    ```

@@ -9,6 +9,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
 $name = trim($input['name'] ?? '');
 
+if (mb_strlen($name) > 50) {
+    json_response(['error' => 'Name is too long'], 400);
+}
+
 if (empty($name)) {
     json_response(['error' => 'Name is required'], 400);
 }
