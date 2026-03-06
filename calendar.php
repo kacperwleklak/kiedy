@@ -234,12 +234,12 @@ foreach ($availabilities as $av) {
                                     $tooltip = implode(" | ", $tooltip_parts);
                                 }
                             ?>
-                                <td class="grid-cell <?= $heatmap_class ?> user-<?= $user_status ?>" 
-                                    data-day-id="<?= $day['id'] ?>" 
-                                    data-time="<?= $slot ?>"
+                                <td class="grid-cell <?= htmlspecialchars($heatmap_class) ?> user-<?= htmlspecialchars($user_status) ?>" 
+                                    data-day-id="<?= htmlspecialchars($day['id']) ?>" 
+                                    data-time="<?= htmlspecialchars($slot) ?>"
                                     data-available-vids='<?= json_encode($available_vids) ?>'
                                     data-maybe-vids='<?= json_encode($maybe_vids) ?>'
-                                    data-user-status="<?= $user_status ?>"
+                                    data-user-status="<?= htmlspecialchars($user_status) ?>"
                                     title="<?= htmlspecialchars($tooltip) ?>">
                                     <div class="cell-content"></div>
                                 </td>

@@ -3,13 +3,10 @@
 
 // Helper function to generate a V4 UUID
 function generate_uuid() {
-    return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-        mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-        mt_rand(0, 0xffff),
-        mt_rand(0, 0x0fff) | 0x4000,
-        mt_rand(0, 0x3fff) | 0x8000,
-        mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
-    );
+    $data = random_bytes(16);
+    $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // version 4
+    $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // variant RFC 4122
+    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 }
 
 // Function to handle JSON response
@@ -43,8 +40,13 @@ function get_current_user_id($pdo) {
     $stmt = $pdo->prepare("INSERT INTO users (id, cookie_hash) VALUES (?, ?)");
     $stmt->execute([$user_id, $cookie_hash]);
     
-    // Set cookie for 10 years
-    setcookie($cookie_name, $cookie_hash, time() + (10 * 365 * 24 * 60 * 60), '/');
+    // Set cookie for 10 years (HttpOnly + SameSite to protect from XSS/CSRF)
+    setcookie($cookie_name, $cookie_hash, [
+        'expires'  => time() + (10 * 365 * 24 * 60 * 60),
+        'path'     => '/',
+        'httponly' => true,
+        'samesite' => 'Strict',
+    ]);
     
     return $user_id;
 }

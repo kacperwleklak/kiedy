@@ -48,5 +48,6 @@ try {
 
 } catch (Exception $e) {
     $pdo->rollBack();
-    die("An error occurred: " . $e->getMessage());
+    error_log("create_calendar error: " . $e->getMessage());
+    die("An unexpected error occurred. Please try again.");
 }
