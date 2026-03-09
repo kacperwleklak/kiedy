@@ -1,11 +1,11 @@
 <?php
 // config.php
 
-define('DB_HOST', 'db');
-define('DB_PORT', '3306');
-define('DB_NAME', 'kiedy');
-define('DB_USER', 'kiedy_user');
-define('DB_PASS', 'kiedy_password');
+define('DB_HOST', getenv('DB_HOST') ?: 'db');
+define('DB_PORT', getenv('DB_PORT') ?: '3306');
+define('DB_NAME', getenv('DB_NAME') ?: 'kiedy');
+define('DB_USER', getenv('DB_USER') ?: 'kiedy_user');
+define('DB_PASS', getenv('DB_PASS'));   // no fallback — fail loudly if missing
 
 function getDB() {
     static $pdo = null;

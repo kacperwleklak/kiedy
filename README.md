@@ -23,7 +23,7 @@ The easiest way to run the project locally for development is using Docker and D
 
 3. Start the Docker containers:
    ```bash
-   docker-compose up -d --build
+   docker compose up -d --build
    ```
 
 4. Open your browser and navigate to:
@@ -37,11 +37,11 @@ The database will be automatically initialized with the schema defined in `datab
 
 To stop the containers, run:
 ```bash
-docker-compose down
+docker compose down
 ```
 If you want to remove the database volume and start fresh on the next run, use:
 ```bash
-docker-compose down -v
+docker compose down -v
 ```
 
 ## 📂 Project Structure
@@ -54,7 +54,7 @@ docker-compose down -v
 - **`database.sql`**: The initial database schema. This file runs automatically when the MySQL Docker container starts for the first time.
 - **`css/` & `js/`**: Application styling and client-side logic.
 - **`docker-compose.yml` & `Dockerfile`**: Configuration for running the app in a Docker-containerized environment.
-- **`apache-config.conf`**: Apache VirtualHost configuration rules.
+- **`apache-config.conf`**: Apache VirtualHost configuration (used by the Docker/Apache setup).
 
 ## 🤝 How to Contribute
 
