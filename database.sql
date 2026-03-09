@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS calendar_days (
 CREATE TABLE IF NOT EXISTS users (
     id VARCHAR(36) PRIMARY KEY,
     name VARCHAR(255),
-    cookie_hash VARCHAR(64) NOT NULL UNIQUE
+    cookie_hash VARCHAR(64) NOT NULL UNIQUE,
+    is_verified BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS availabilities (

@@ -26,6 +26,10 @@ try {
     $pdo = getDB();
     $user_id = get_current_user_id($pdo);
 
+    if (!is_user_verified($pdo, $user_id)) {
+        json_response(['error' => 'You must pass CAPTCHA to update availability.'], 403);
+    }
+
     // Verify the calendar_day_id actually exists (prevents blind writes to arbitrary IDs)
     $stmtCheck = $pdo->prepare("SELECT id FROM calendar_days WHERE id = ?");
     $stmtCheck->execute([$calendar_day_id]);

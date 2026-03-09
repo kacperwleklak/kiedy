@@ -11,6 +11,11 @@ $description = trim($_POST['description'] ?? '');
 $start_time = $_POST['start_time'] ?? '08:00';
 $end_time = $_POST['end_time'] ?? '20:00';
 $datesJSON = $_POST['dates'] ?? '[]';
+$turnstileToken = $_POST['cf-turnstile-response'] ?? '';
+
+if (!validate_turnstile($turnstileToken)) {
+    die('CAPTCHA validation failed.');
+}
 
 if (mb_strlen($title) > 200) die('Title too long.');
 if (mb_strlen($description) > 2000) die('Description too long.');
@@ -30,6 +35,9 @@ if ($start_time >= $end_time) {
 }
 
 $pdo = getDB();
+$user_id = get_current_user_id($pdo);
+set_user_verified($pdo, $user_id);
+
 $calendar_id = generate_uuid();
 
 try {

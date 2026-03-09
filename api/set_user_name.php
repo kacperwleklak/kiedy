@@ -8,6 +8,18 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
 $name = trim($input['name'] ?? '');
+$captchaToken = $input['captcha_token'] ?? '';
+
+$pdo = getDB();
+$user_id = get_current_user_id($pdo);
+
+// If user is already verified, we can skip captcha (though normally they'd only see the modal if not)
+if (!is_user_verified($pdo, $user_id)) {
+    if (!validate_turnstile($captchaToken)) {
+        json_response(['error' => 'CAPTCHA validation failed'], 400);
+    }
+    set_user_verified($pdo, $user_id);
+}
 
 if (mb_strlen($name) > 50) {
     json_response(['error' => 'Name is too long'], 400);
@@ -18,8 +30,7 @@ if (empty($name)) {
 }
 
 try {
-    $pdo = getDB();
-    $user_id = get_current_user_id($pdo);
+    // $pdo and $user_id already initialized above
     
     $stmt = $pdo->prepare("UPDATE users SET name = ? WHERE id = ?");
     $stmt->execute([$name, $user_id]);

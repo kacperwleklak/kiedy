@@ -1,5 +1,6 @@
 <?php
 // helpers.php
+require_once 'config.php';
 
 // Helper function to generate a V4 UUID
 function generate_uuid() {
@@ -50,4 +51,54 @@ function get_current_user_id($pdo) {
     ]);
     
     return $user_id;
+}
+
+// Check if user is verified
+function is_user_verified($pdo, $user_id) {
+    if (!$user_id) return false;
+    $stmt = $pdo->prepare("SELECT is_verified FROM users WHERE id = ?");
+    $stmt->execute([$user_id]);
+    return (bool)$stmt->fetchColumn();
+}
+
+// Set user as verified
+function set_user_verified($pdo, $user_id) {
+    $stmt = $pdo->prepare("UPDATE users SET is_verified = TRUE WHERE id = ?");
+    return $stmt->execute([$user_id]);
+}
+
+// Validate Cloudflare Turnstile token
+function validate_turnstile($token) {
+    if (empty($token)) return false;
+    if (empty(TURNSTILE_SECRET_KEY)) return true; // Skip if no key (dev mode)
+
+    $url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+    $data = [
+        'secret' => TURNSTILE_SECRET_KEY,
+        'response' => $token
+    ];
+
+    $remoteip = $_SERVER['HTTP_CF_CONNECTING_IP'] ??
+                $_SERVER['HTTP_X_FORWARDED_FOR'] ??
+                $_SERVER['REMOTE_ADDR'];
+
+    if ($remoteip) {
+        $data['remoteip'] = $remoteip;
+    }
+
+    $options = [
+        'http' => [
+            'header'  => "Content-type: application/x-www-form-urlencoded",
+            'method'  => 'POST',
+            'content' => http_build_query($data)
+        ]
+    ];
+
+    $context  = stream_context_create($options);
+    $result = file_get_contents($url, false, $context);
+    
+    if ($result === false) return false;
+
+    $response = json_decode($result, true);
+    return !empty($response['success']);
 }

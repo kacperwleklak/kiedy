@@ -35,6 +35,7 @@ $stmtUser = $pdo->prepare("SELECT name FROM users WHERE id = ?");
 $stmtUser->execute([$user_id]);
 $currentUser = $stmtUser->fetch();
 $has_name = !empty($currentUser['name']);
+$is_verified = is_user_verified($pdo, $user_id);
 
 $day_ids = array_column($days, 'id');
 $availabilities = [];
@@ -91,6 +92,7 @@ foreach ($availabilities as $av) {
     <title><?= htmlspecialchars($calendar['title']) ?> - Kiedy</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
     <div class="background-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
@@ -101,6 +103,11 @@ foreach ($availabilities as $av) {
             <h2>Who are you?</h2>
             <p class="subtitle">Please enter your name to add your availability.</p>
             <input type="text" id="userNameInput" placeholder="Your Name" required>
+            
+            <?php if (!$is_verified): ?>
+                <div class="cf-turnstile mt-4" data-sitekey="<?= htmlspecialchars(TURNSTILE_SITE_KEY) ?>"></div>
+            <?php endif; ?>
+
             <button id="saveNameBtn" class="btn btn-primary w-100 mt-4">Save & Continue</button>
         </div>
     </div>
@@ -255,6 +262,7 @@ foreach ($availabilities as $av) {
 
     <script>
         const HAS_NAME = <?= $has_name ? 'true' : 'false' ?>;
+        const IS_VERIFIED = <?= $is_verified ? 'true' : 'false' ?>;
     </script>
     <script src="js/calendar.js"></script>
 </body>

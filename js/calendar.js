@@ -4,10 +4,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const userNameInput = document.getElementById('userNameInput');
     const saveNameBtn = document.getElementById('saveNameBtn');
 
-    if (!HAS_NAME && nameModal) {
+    if ((!HAS_NAME || !IS_VERIFIED) && nameModal) {
         saveNameBtn.addEventListener('click', async () => {
             const name = userNameInput.value.trim();
             if (!name) return;
+
+            const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]')?.value;
+            if (!IS_VERIFIED && !turnstileResponse) {
+                alert('Please complete the CAPTCHA.');
+                return;
+            }
 
             saveNameBtn.disabled = true;
             saveNameBtn.textContent = 'Saving...';
@@ -16,11 +22,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await fetch('api/set_user_name.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name })
+                    body: JSON.stringify({
+                        name,
+                        captcha_token: turnstileResponse
+                    })
                 });
 
                 if (res.ok) {
-                    nameModal.classList.add('hidden');
+                    window.location.reload(); // Reload to update IS_VERIFIED and HAS_NAME
+                } else {
+                    const data = await res.json();
+                    alert(data.error || 'Failed to save name.');
                 }
             } catch (e) {
                 console.error(e);
@@ -56,8 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (toggleEditModeBtn) {
         toggleEditModeBtn.addEventListener('click', () => {
-            // Require name first
-            if (!HAS_NAME && !nameModal.classList.contains('hidden')) {
+            // Require name and verification first
+            if ((!HAS_NAME || !IS_VERIFIED) && !nameModal.classList.contains('hidden')) {
                 nameModal.classList.remove('hidden');
                 return;
             }

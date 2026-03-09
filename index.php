@@ -1,3 +1,5 @@
+<?php require_once 'config.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en-GB">
 <head>
@@ -8,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
     <div class="background-orbs">
@@ -98,6 +101,8 @@
                 </div>
                 <div id="dateError" class="error-text hidden">Please select at least one date.</div>
             </div>
+
+            <div class="cf-turnstile mt-4" data-sitekey="<?= htmlspecialchars(TURNSTILE_SITE_KEY) ?>"></div>
 
             <button type="submit" class="btn btn-primary btn-large w-100 mt-4">Create Calendar</button>
         </form>

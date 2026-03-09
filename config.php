@@ -6,6 +6,8 @@ define('DB_PORT', getenv('DB_PORT') ?: '3306');
 define('DB_NAME', getenv('DB_NAME') ?: 'kiedy');
 define('DB_USER', getenv('DB_USER') ?: 'kiedy_user');
 define('DB_PASS', getenv('DB_PASS'));   // no fallback — fail loudly if missing
+define('TURNSTILE_SITE_KEY', getenv('TURNSTILE_SITE_KEY'));
+define('TURNSTILE_SECRET_KEY', getenv('TURNSTILE_SECRET_KEY'));
 
 function getDB() {
     static $pdo = null;
