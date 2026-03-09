@@ -110,5 +110,6 @@
 
     <?php include 'footer.php'; ?>
     <script src="js/app.js"></script>
+    <script src="js/cookie-notice.js"></script>
 </body>
 </html>

@@ -265,5 +265,6 @@ foreach ($availabilities as $av) {
         const IS_VERIFIED = <?= $is_verified ? 'true' : 'false' ?>;
     </script>
     <script src="js/calendar.js"></script>
+    <script src="js/cookie-notice.js"></script>
 </body>
 </html>
